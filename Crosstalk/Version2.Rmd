@@ -1,0 +1,73 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(readxl)
+library(dplyr)
+```
+
+```{r data}
+videos = read.csv("https://raw.githubusercontent.com/chzelada/ufm-dp-2022/main/FlexDashBoard/data/academatica_videos.csv", sep = ",")
+metadata = read.csv("https://raw.githubusercontent.com/chzelada/ufm-dp-2022/main/FlexDashBoard/data/academatica_videos_metadata.csv", sep = ",")
+stats = read.csv("https://raw.githubusercontent.com/chzelada/ufm-dp-2022/main/FlexDashBoard/data/academatica_video_stats.csv", sep = ",")
+```
+
+```{r kpis}
+metricas = stats %>% summarise(tot_views = sum(viewCount), 
+                               tot_likes = sum(likeCount), 
+                               tot_dislikes = sum(dislikeCount), 
+                               tot_favorite = sum(favoriteCount), 
+                               tot_comments = sum(commentCount))
+```
+
+# Metrica {data-icon=fa-ruler}
+
+##
+
+### Reproducciones
+
+```{r}
+valueBox(metricas$tot_views, icon = "fa-eye", color = "success")
+```
+
+### Me Gustas
+
+```{r}
+valueBox(metricas$tot_likes, icon = "fa-thumbs-up", color = "warning")
+```
+
+### Comentarios
+
+```{r}
+valueBox(metricas$tot_comments, icon = "fa-comment", color = "danger")
+```
+
+##
+
+###
+
+```{r}
+rlikes = metricas$tot_likes / (metricas$tot_likes+metricas$tot_dislikes)
+rlikes = round(rlikes,2)*100
+gauge(rlikes, min = 0, max = 100, symbol = '%', gaugeSectors(success = c(80,100),
+   warning = c(40,79), danger = c(0,39)))
+```
+
+###
+
+```{r}
+rdislikes = metricas$tot_dislikes / (metricas$tot_likes+metricas$tot_dislikes)
+rdislikes = round(rdislikes,2)*100
+gauge(rdislikes, min = 0, max = 100, symbol = '%', gaugeSectors(danger = c(80,100),
+   warning = c(40,79), success = c(0,39)))
+```
+
+##
+
+###
