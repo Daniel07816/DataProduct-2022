@@ -1,46 +1,55 @@
+
+
 library(shiny)
 
 shinyServer(function(input, output) {
-
-  output$out_numeric_input = renderPrint({
+  output$out_numeric_input <- renderPrint({
     print(input$ninput)
-    
   })
   
-  output$out_slider_input = renderPrint({
+  output$out_slider_input <- renderPrint({
     print(input$slinput)
   })
   
-  output$out_slider_input_multi = renderPrint({
+  output$out_slider_input_multi <- renderPrint({
     print(input$slinputmulti)
   })
   
-  output$out_slider_input_ani = renderPrint({
+  output$out_slider_input_ani <- renderPrint({
     print(input$slinputanimate)
   })
   
-  output$out_date_input = renderPrint({
+  output$out_date_input <- renderPrint({
     print(input$date_input)
   })
   
-  output$out_date_input_range = renderPrint({
+  output$date_range_input <- renderPrint({
     print(input$date_range_input)
   })
   
-  output$select_input = renderPrint({
+  output$out_select_input <- renderPrint({
     print(input$select_input)
   })
   
-  output$select_input_2 = renderPrint({
+  output$multiple_select_input <- renderPrint({
     print(input$select_input_2)
   })
   
-  output$checkbox_output = renderPrint({
-    print(input$chbox_input)
+  output$checkbox_output <- renderPrint({
+    print(input$chkbox_input)
   })
   
-  output$checkbox_output_2 = renderPrint({
-    print(input$cchbox_group_input)
+  output$check_box_group_out <- renderPrint({
+    print(input$chkbox_group_input)
   })
   
+  output$radio_buttons_out <- renderPrint({
+    print(as.integer(input$radio_buttons))
+    print(str(input$radio_buttons))
+  })
+  
+  output$boton <- renderPrint({
+    print(input$action)
+    print(str(input$action))
+  })
 })
