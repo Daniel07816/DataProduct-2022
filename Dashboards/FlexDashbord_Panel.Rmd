@@ -12,7 +12,6 @@ library(dplyr)
 library(ggplot2)
 ```
 
-
 Col1
 ------------------
 
@@ -34,4 +33,3 @@ iris %>% ggplot(aes(x=Species, y=Sepal.Width, color = Species))+
 iris %>% ggplot(aes(x=Sepal.Width, y=..density.., color=Species))+
   geom_histogram()+geom_density()+facet_wrap(.~Species)
 ```
-
