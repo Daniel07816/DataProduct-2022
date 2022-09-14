@@ -10,7 +10,7 @@ output$grafica_base_r <- renderPlot({
 
 direccion <<- reactiveVal()
 puntos <<- reactiveValues()
-punto <<- reactiveVal()
+punto <<- reactiveValues()
 
 output$click_data <- renderPrint({
   clk_msg <- NULL
@@ -39,7 +39,7 @@ output$click_data <- renderPrint({
   if(!is.null(input$mhover$x) ){
     mhover_msg<-paste0("hover cordenada x= ", round(input$mhover$x,2), 
                      " hover coordenada y= ", round(input$mhover$y,2))
-    punto <- nearPoints(mtcars,input$mhover,xvar='wt',yvar='mpg')
+    punto[["uno"]] <- nearPoints(mtcars,input$mhover,xvar='wt',yvar='mpg')
   }
   
   
@@ -63,8 +63,9 @@ output$click_data <- renderPrint({
 
 output$plot_click_options <- renderPlot({
   lista <<- reactiveValuesToList(puntos)
+  lista2 <<- reactiveValuesToList(punto)
   plot(mtcars$wt,mtcars$mpg, xlab = "wt", ylab="millas por galon")
-  points(punto()$wt,punto()$mpg,col='gray',pch=19)
+  lapply(lista2, impresor2)
   lapply(lista, impresor)
 })
 
@@ -87,6 +88,10 @@ output$mtcars_tbl <- renderTable({
 
 impresor <- function(list){
   points(list$wt,list$mpg,col='green',pch=19)
+}
+
+impresor2 <- function(list){
+  points(list$wt,list$mpg,col='gray',pch=19)
 }
 
 })
