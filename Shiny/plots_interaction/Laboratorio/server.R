@@ -3,15 +3,17 @@ library(ggplot2)
 library(dplyr)
 library(DT)
 
+
+puntos <- reactiveValues()
+punto <- reactiveValues()
+mmtcars <- mtcars[1,]
+mmtcars <- mmtcars[!TRUE,]
+
 shinyServer(function(input, output) {
   
   output$grafica_base_r <- renderPlot({
     plot(mtcars$wt,mtcars$mpg, xlab = "wt", ylab="millas por galon")
   })
-  
-  direccion <<- reactiveVal()
-  puntos <<- reactiveValues()
-  punto <<- reactiveValues()
   
   output$click_data <- renderPrint({
     clk_msg <- NULL
@@ -42,8 +44,8 @@ shinyServer(function(input, output) {
     }
     
     cat(clk_msg,dclk_msg,mhover_msg,mbrush_msg,sep = '\n')
-    
   })
+  
   
   puntos_posibles <- reactive({
     posible = nearPoints(mtcars,input$clk,xvar='wt',yvar='mpg')
@@ -55,17 +57,40 @@ shinyServer(function(input, output) {
     posible = nearPoints(mtcars,input$dclk,xvar='wt',yvar='mpg')
     if(nrow(posible) != 0){
       direccion <- toString(posible$wt-posible$mpg)
-      puntos[[direccion]] <- NULL
+      puntos[[direccion]] <- mmtcars
     }
     
     posibles = brushedPoints(mtcars,input$mbrush,xvar='wt',yvar='mpg')
     if(nrow(posibles) != 0){
-      direccion <- toString(posibles$wt-posibles$mpg)
-      puntos[[direccion]] <- posibles
+      
+      for (i in 1:nrow(posibles)) {
+        row <- posibles[i,]
+        direccion <- toString(row$wt-row$mpg)
+        puntos[[direccion]] <- row
+      }
     }
     
     return(puntos)
   })
+  
+  
+  imprimir <- reactive({
+    listado <- reactiveValuesToList(puntos_posibles())
+    
+    dta <- data.frame(NULL)
+    
+    if(length(listado) != 0){
+      
+      for (i in 1:length(listado)) {
+        row <- listado[[i]]
+        dta <- rbind(dta, row)
+      }
+    }
+    
+    return(dta)
+  })
+  
+  
   
   output$plot_click_options <- renderPlot({
     lista <<- reactiveValuesToList(puntos_posibles())
@@ -75,15 +100,10 @@ shinyServer(function(input, output) {
     lapply(lista, impresor)
   })
   
-  imprimir <- reactive({
-    return(as.matrix(lista))
+  output$mtcars_tbl <- renderTable({
+    imprimir()
   })
   
-  output$mtcars_tbl <- renderPrint({
-    listados <- reactiveValuesToList(puntos_posibles(), all.names = FALSE)
-    listados <- as.data.frame(listados)
-    print(listados)
-  })
   
   impresor <- function(list){
     points(list$wt,list$mpg,col='green',pch=19)
