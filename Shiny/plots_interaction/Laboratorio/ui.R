@@ -1,5 +1,6 @@
 
 library(shiny)
+#library(shinydashboard)
 
 
 shinyUI(fluidPage(
@@ -16,7 +17,8 @@ shinyUI(fluidPage(
                             hover = 'mhover',
                             brush = 'mbrush' ),
                  verbatimTextOutput("click_data"),
-                 tableOutput("mtcars_tbl")
+                 textOutput("mtcars_tbl")
         )
     )
 ))
+#dashboardBody(textOutput(outputId = "out"))
