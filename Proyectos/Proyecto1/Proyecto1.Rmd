@@ -16,9 +16,8 @@ library(rnaturalearth)
 library(writexl)
 library(readxl)
 library(highcharter)
-#install.packages("writexl")
 ```
-```{r}
+```{r data inicial, include=FALSE}
 my_data <- read.csv("tienda.csv")
 datos_p <- my_data %>%
               summarise(Ventas_totales = sum(Sales),
@@ -31,56 +30,44 @@ datos_n <- my_data %>%
                 summarise(cantidad = n())
 ```
 
-
-
-# Data
-
-
-```{r Data}
-my_data %>% head(100) %>% datatable(class = "compact",caption = "Datos ejemplo de la data manejada en el proyecto", width = 800)
-```
-
-
-
-
 # Rentabilidad general
 
 Column {data-width=600}
 -----------------------------------------------------------------------
 
-### Top 10 clientes
+### Mejores 10 clientes
 
-```{r}
+```{r topTen}
 dat3 <- my_data %>%
           select(Customer.ID, Quantity, Profit) %>%
           group_by(Customer.ID) %>%
           summarise(cantidad = sum(Quantity), profit = sum(Profit)) %>%
           arrange(desc(profit)) %>% head(10)
 ggplot(dat3, aes(x = Customer.ID, y = profit)) +
-  geom_col() +labs(title="TOP 10 clientes que generan más profit", 
+  geom_col() +labs(title="Clientes que generan mas ganancias", 
        subtitle="-", 
-       caption="source: -") + 
+       caption="source: tienda.csv dataset") + 
   theme(axis.text.x = element_text(angle=65, vjust=0.6))
 ```
 
 ### Ventas totales
 
-```{r}
+```{r totalSales}
 ventas <- comma(datos_p$Ventas_totales, digits = 0)
 valueBox(ventas,icon='fa-dollar-sign',color = "blue")
 ```
 
 
-### Profit generado
+### Ganancias generadas
 
-```{r}
+```{r totalProfit}
 pro <- comma(datos_p$Profit_generado, digits = 0)
 valueBox(pro,icon='fa-percent',color = "success")
 ```
     
 ### Total de clientes
 
-```{r}
+```{r totalClients}
 tocli <- comma(datos_p$Total_clientes, digits = 0)
 valueBox(tocli,icon='fa-user',color = "red")
 ```
@@ -89,9 +76,9 @@ valueBox(tocli,icon='fa-user',color = "red")
 Column {.tabset data-width=900}
 -----------------------------------------------------------------------
 
-
 ### Productos rentables
-```{r}
+
+```{r rProds}
 dat2 <- my_data %>%
           select(State, Product.ID, Profit, Category, Sub.Category) %>%
           group_by(State,Product.ID, Category, Sub.Category) %>%
@@ -107,9 +94,9 @@ data_shared %>%
 
 
 
-### Profit promedio por estados
+### Ganancias promedio por estado
 
-```{r}
+```{r stateProfit}
 dat1 <- my_data %>%
           select(State, Profit) %>%
           group_by(State) %>%
@@ -121,17 +108,14 @@ ggplot(dat1, aes(x=State, y=profit_promedio)) +
                    xend=State, 
                    y=0, 
                    yend=profit_promedio)) + 
-  labs(title="Profit promedio por estado", 
-       subtitle="-", 
-       caption="source: -") + 
+  labs(title="Profit promedio por estado") + 
   theme(axis.text.x = element_text(angle=65, vjust=0.6))
 ```
 
 
 ### Tipos de credito
 
-
-```{r}
+```{r credits}
 creditos <- my_data %>% 
               select(Discount) %>%
               group_by(Discount) %>%
@@ -144,25 +128,20 @@ creditos %>% datatable(class = "compact",caption = "Tipo de creditos manejados y
 Column {data-width=300}
 -----------------------------------------------------------------------
 
+Datos analizados: 9994
 
-Del total de observaciones: 9994 obs
+### Segmento Minorista
 
-
-
-
-
-### Costumer Segment
-
-```{r}
+```{r Sclien}
 rConsumer <- datos_n[1,2] / (datos_n[1,2] + datos_n[2,2] + datos_n[3,2])
 rConsumer <- round(rConsumer,2)*100
 gauge(rConsumer[1,1], min = 0, max = 100, symbol = "%", 
       gaugeSectors(success = c(50,100), warning = c(0,49)))
 ```
 
-### Corporate Segment
+### Segmento Corporativo
 
-```{r}
+```{r Scorp}
 rCorporate <- datos_n[2,2] / (datos_n[1,2] + datos_n[2,2] + datos_n[3,2])
 rCorporate <- round(rCorporate,2)*100
 gauge(rCorporate[1,1], min = 0, max = 100, symbol = "%", 
@@ -170,9 +149,9 @@ gauge(rCorporate[1,1], min = 0, max = 100, symbol = "%",
 ```
 
 
-### Home Office Segment.
+### Segmento Corporativo en Casa
 
-```{r}
+```{r Shome}
 rhome <- datos_n[3,2] / (datos_n[1,2] + datos_n[2,2] + datos_n[3,2])
 rhome <- round(rhome,2)*100
 gauge(rhome[1,1], min = 0, max = 100, symbol = "%", 
@@ -182,17 +161,16 @@ gauge(rhome[1,1], min = 0, max = 100, symbol = "%",
 
 ### Ordenes totales
 
-```{r}
+```{r orders}
 orde <- comma(datos_p$Ordenes_totales, digits = 0)
 valueBox(orde,icon='fa-truck',color = "brown")
 ```
 
 
-
 Column { data-width=300}
 -----------------------------------------------------------------------
 
-```{r}
+```{r map}
 estados_data <- read_excel('data_estados.xlsx')
 estados_data$lon <- as.numeric(estados_data$lon)
 estados_data[22,4] <- -91.74
@@ -209,12 +187,14 @@ data_shared2 <- SharedData$new(estados_data)
 ```
 
 ### Análisis geográfico de ventas y ganancias
+
 ```{r}
 data_shared2 %>%
   DT::datatable()
 ```
 
 ### Mapa
+
 ```{r}
 data_shared2 %>%
   leaflet() %>%
@@ -225,13 +205,14 @@ data_shared2 %>%
 ```
 
 
-# Productos +/-. Segement análisis
+# Mejor y Peor Producto. Analisis p/segm.
 
 
 Column { data-width=600}
 -----------------------------------------------------------------------
 
-### Productos +/- rentables
+### Producto mas rentable
+
 ```{r}
 mas_rentable <-  my_data %>%
       select(Product.ID, Product.Name,Profit) %>%
@@ -247,7 +228,7 @@ tabla_productos <- rbind(mas_rentable, menos_rentable)
 DT::datatable(tabla_productos)
 ```
 
-### Cantidad de envios de: Canon imageCLASS 2200 Advanced Copier
+### Envios Canon imageCLASS 2200 Advanced Copier
 
 ```{r}
 mas_rentable <-  my_data %>%
@@ -259,7 +240,7 @@ orde <- comma(mas_rentable$Cantidad, digits = 0)
 valueBox(orde,icon='fa-truck',color = "success")
 ```
 
-### Cantidad de envios de: Cubify CubeX 3D Printer Triple Head Print
+### Envios Cubify CubeX 3D Printer Triple Head Print
 
 ```{r}
 menos_rentable <-  my_data %>%
@@ -275,34 +256,42 @@ Column {.tabset data-width=600}
 -----------------------------------------------------------------------
 
 ### Profit promedio por segmento
+
 ```{r}
 my_data %>%
     select(Segment, Sales, Quantity, Profit) %>%
     group_by(Segment) %>%
     summarise(Ventas_totales = sum(Sales), Cantidad_productos = sum(Quantity), Profit_total = sum(Profit), Profit_promedio = mean(Profit)) %>%
     hchart("column", hcaes(x = Segment, y = Profit_promedio)) %>%
-  hc_title(text = "<b>Profit promedio por segmento") %>%
-  hc_subtitle(text = "<i> Home Office realiza más promedio</i>")
+  hc_title(text = "<b>Profit promedio por segmento")
 ```
 
 ### Cantidad de productos
+
 ```{r}
 my_data %>%
     select(Segment, Sales, Quantity, Profit) %>%
     group_by(Segment) %>%
     summarise(Ventas_totales = sum(Sales), Cantidad_productos = sum(Quantity), Profit_total = sum(Profit), Profit_promedio = mean(Profit)) %>%
     hchart("column", hcaes(x = Segment, y = Cantidad_productos)) %>%
-  hc_title(text = "<b>Cantidad de productos por segmentob") %>%
-  hc_subtitle(text = "<i>Se venden más productos a Consumer</i>")
+  hc_title(text = "<b>Cantidad de productos por segmento")
 ```
 
 ### Ventas totales
+
 ```{r}
 my_data %>%
     select(Segment, Sales, Quantity, Profit) %>%
     group_by(Segment) %>%
     summarise(Ventas_totales = sum(Sales), Cantidad_productos = sum(Quantity), Profit_total = sum(Profit), Profit_promedio = mean(Profit)) %>%
     hchart("column", hcaes(x = Segment, y = Ventas_totales)) %>%
-  hc_title(text = "<b>Ventas totales por segmentob") %>%
-  hc_subtitle(text = "<i>Consumer realiza más ventas.</i>")
+  hc_title(text = "<b>Ventas totales por segmento")
+```
+
+
+
+# Datos
+
+```{r Data}
+my_data %>% head(100) %>% datatable(class = "compact",caption = "Data manejada en el proyecto", width = 800)
 ```
