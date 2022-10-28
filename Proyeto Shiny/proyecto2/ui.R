@@ -8,12 +8,27 @@
 #
 
 library(shiny)
+library(DT)
+library(readr)
 
-# Define UI for application that draws a histogram
+#Dataset
+dataset <- read_csv("dataset.csv")
+dataset <- dataset[-5]
+
+dataset <- dataset %>% 
+  mutate(Seasons = case_when(!is.na(Seasons) ~ Seasons, is.na(Seasons) ~ "1"))
+
+dataset <- dataset %>% 
+  mutate(Seasons = as.numeric(Seasons), 
+         Episodes = as.numeric(Episodes)) %>% 
+  filter(!is.na(Seasons)) %>% 
+  filter(!is.na(Episodes))
+
+
 shinyUI(fluidPage(
 
     # Application title
-    titlePanel("Informacion de Series"),
+    titlePanel("Series Information"),
 
     # Sidebar with a slider input for number of bins
     tabsetPanel(
@@ -24,31 +39,35 @@ shinyUI(fluidPage(
                    br(),
                    p("Filtros", 
                      style = "font-weight: bold; color: black;"),
-                   p("Seleccione al menos un filtro para mostrar la tabla. "),
+                   p("Select at least one filter to deploy the table"),
                    br()
                  ),
                  fluidRow(
                    column(3,
-                          selectInput("inHostName","Select host name: ",c("Todos",unique(df$`host name`))),
-                          selectInput("inNeighbourHood","Select neighbourhood group: ",c("Todos",unique(df$`neighbourhood group`)))
+                          selectInput("inCountry","Select country of production: ",c("All",unique(dataset$Country))),
+                          selectInput("inStyle","Type style of production: ",c("All",unique(dataset$Technique)))
                    ),
                    column(4,
-                          checkboxGroupInput('chkbox_group_input',
-                                             'Select room type:',
-                                             choices = unique(df$`room type`),
-                                             selected = NULL,inline = TRUE),
                           br(),
-                          sliderInput('inPrice','Select price:',
-                                      value = c(min(df$price),max(df$price)),
-                                      min = min(df$price), 
-                                      max=max(df$price),
+                          sliderInput('inYearS','Select premiere year range:',
+                                      value = c(min(dataset$`Premiere Year`),max(dataset$`Premiere Year`)),
+                                      min = min(dataset$`Premiere Year`), 
+                                      max=max(dataset$`Premiere Year`),
                                       step = 1,
-                                      pre = '$',
+                                      sep = ',' ),
+                          br(),
+                          sliderInput('inYearE','Select end year range:',
+                                      value = c(min(dataset$`Final Year`),max(dataset$`Final Year`)),
+                                      min = min(dataset$`Final Year`), 
+                                      max=max(dataset$`Final Year`),
+                                      step = 1,
                                       sep = ',' )
                           
                    ),
                    column(2,
-                          numericInput("inAvil","Availability 365:",
+                          numericInput("Seasons","Amount of Seasons:",
+                                       value = 0, step = 1 ),
+                          numericInput("Episodes","Amount of Episodes:",
                                        value = 0, step = 1 )
                           
                    ),

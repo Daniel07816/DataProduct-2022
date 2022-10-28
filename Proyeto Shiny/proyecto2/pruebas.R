@@ -3,7 +3,7 @@ library(dplyr)
 library(lubridate)
 library(stringr)
 
-dataset <- read_csv("proyecto2/dataset.csv")
+dataset <- read_csv("dataset.csv")
 View(dataset)
 str(dataset)
 

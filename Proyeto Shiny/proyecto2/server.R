@@ -1,28 +1,55 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
+library(readr)
+library(dplyr)
+library(ggplot2)
 
-# Define server logic required to draw a histogram
-shinyServer(function(input, output) {
 
-    output$distPlot <- renderPlot({
+#Dataset
+dataset <- read_csv("dataset.csv")
+dataset <- dataset[-5]
 
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+dataset <- dataset %>% 
+  mutate(Seasons = case_when(!is.na(Seasons) ~ Seasons, is.na(Seasons) ~ "1"))
 
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
+dataset <- dataset %>% 
+  mutate(Seasons = as.numeric(Seasons), 
+         Episodes = as.numeric(Episodes)) %>% 
+  filter(!is.na(Seasons)) %>% 
+  filter(!is.na(Episodes))
 
-    })
+shinyServer(function(input, output, session) {
+  
+  output$tabla <- DT::renderDataTable({
+    tabla <- dataset 
+    if(input$inStyle != ""){
+      if(input$inStyle == "All"){
+        tabla <- tabla 
+      }
+      else{
+        tabla <- tabla %>% filter(Technique %in% input$inStyle) 
+      }
+    }
+    if(input$inCountry != ""){
+      if(input$inCountry == "All"){
+        tabla <- tabla 
+      }
+      else{
+        tabla <- tabla %>% filter(Country %in% input$inCountry) 
+      }
+    }
+    if(input$Seasons != 0){
+      tabla <- tabla %>% filter(Seasons %in% input$Seasons) 
+    }
+    
+    if(input$Episodes != 0){
+      tabla <- tabla %>% filter(Episodes %in% input$Episodes) 
+    }
+    
+    ifelse(input$inYearS != 0,tabla <- tabla %>% filter(between(`Premiere Year`,input$inYearS[1],input$inYearS[2])),tabla)
+    ifelse(input$inYearE != 0,tabla <- tabla %>% filter(between(`Final Year`,input$inYearE[1],input$inYearE[2])),tabla)
+    
+    tabla <- tabla %>% select(Title, Seasons, Episodes, Country, `Premiere Year`,`Final Year`,`Original Channel`, Technique) %>%
+      DT::datatable(options = list(searching=FALSE,bLengthChange =FALSE))
+  })
 
 })
