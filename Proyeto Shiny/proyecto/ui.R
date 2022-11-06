@@ -1,4 +1,3 @@
-
 library(shiny)
 library(DT)
 library(plotly)
@@ -8,11 +7,11 @@ dataset <- readRDS("data.rds")
 
 shinyUI(fluidPage(
   
-  titlePanel("SERIES INFORMATION"),
+  titlePanel("CARTOON SERIES INFORMATION"),
   
   mainPanel(width = 12,
     tabsetPanel(
-      tabPanel("Data con filtros",
+      tabPanel("Listado de Series",
                fluidRow(
                  column(4,
                         selectInput("inCountry","Select country of production: ",
@@ -48,7 +47,7 @@ shinyUI(fluidPage(
                         numericInput("Episodes","Amount of Episodes:",
                                      value = 0, step = 1, 
                                      width = "100%")
-                 ),
+                 )
                ),
                fluidRow(
                  column(12,textInput("url_param","Marcador: ",value = "", width = "75%"))
@@ -58,7 +57,7 @@ shinyUI(fluidPage(
                )
       ), # Fin de Filtros
       
-      tabPanel("Graficas",
+      tabPanel("Metricas generales",
                fluidRow(
                  column(4,plotly::plotlyOutput("plot_1")), 
                  column(4,plotly::plotlyOutput("plot_2")), 
@@ -67,29 +66,44 @@ shinyUI(fluidPage(
                
       ), # Fin de Graficas
       
-      tabPanel("a",
-               fluidRow(
-
+      tabPanel("Mi lista",
+               fluidRow(column(8,
+                               h2('Series disponibles'),
+                               h4('(Has click para añadir a tu lista)'),
+                               DT::dataTableOutput('tabla_3'),
+                               verbatimTextOutput('output_1')),
+                        column(4,
+                               h2('Mis series'),
+                               h4('(Has click para eliminarla de tu lista)'),
+                               DT::dataTableOutput('tabla_4'),
+                               verbatimTextOutput('output_2')
+                        )
                )
+
                
-      ) # Fin de Graficas
+      ), # Fin de Mi lista
       
-      
-      
-      
-      
-      
-      
-      
-      
-      
+      tabPanel("Simulacion",
+               fluidRow(column(6, 
+                               numericInput("episodios","¿Cuantos episodios puedes ver al dia?",
+                                            value = 1, step = 1, 
+                                            width = "100%")
+                               )
+                        ),
+               fluidRow(column(12,
+                               plotlyOutput("plot_dias"), 
+                               h4('Terminarías las series de tu lista en este tiempo')
+                               ) 
+                        
+                        )
+               
+               
+      ) # Fin de Mi lista
       
       
       
       
     ) ## fin de tabsetPanel
-    
-    
     
     
   ) ## fin del mainPanel 

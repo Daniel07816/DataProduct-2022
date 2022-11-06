@@ -6,6 +6,9 @@ library(plotly)
 
 data <- readRDS("data.rds")
 
+mi_lista <- data %>% head(1)
+mi_lista <- mi_lista[-1,]
+
 
 shinyServer(function(input, output, session) {
   
@@ -15,6 +18,11 @@ shinyServer(function(input, output, session) {
     inStyle <- query[["inStyle"]]
     Seasons  <- query[["Seasons"]]
     Episodes  <- query[["Episodes"]]
+    
+    inYearS1  <- query[["inYearS1"]]
+    inYearS2  <- query[["inYearS2"]]
+    inYearE1  <- query[["inYearE1"]]
+    inYearE2  <- query[["inYearE2"]]
     
     if(!is.null(inCountry)){
       updateSelectInput(session, "inCountry", selected = inCountry)
@@ -28,6 +36,18 @@ shinyServer(function(input, output, session) {
     if(!is.null(Episodes)){
       updateNumericInput(session, "Episodes", value=as.numeric(Episodes))
     }
+    
+    
+    
+    if(!is.null(inYearS1) && !is.null(inYearS2)){
+      updateSliderInput(session, "inYearS", value=c(as.numeric(inYearS1), as.numeric(inYearS2)) )
+    }
+
+    if(!is.null(inYearE1) && !is.null(inYearE2)){
+      updateSliderInput(session, "inYearE", value=c(as.numeric(inYearE1), as.numeric(inYearE2)) )
+    }
+    
+    
   })
   
   
@@ -37,13 +57,17 @@ shinyServer(function(input, output, session) {
     Seasons  <- input$Seasons
     Episodes  <- input$Episodes
     
+    inYearS1  <- input$inYearS[1]
+    inYearS2  <- input$inYearS[2]
+    inYearE1  <- input$inYearE[1]
+    inYearE2  <- input$inYearE[2]
+    
     if(session$clientData$url_port==''){
       x <- NULL
     } else {
       x <- paste0(":",
                   session$clientData$url_port)
     }
-    
     marcador<-paste0("http://",
                      session$clientData$url_hostname,
                      x,
@@ -55,7 +79,15 @@ shinyServer(function(input, output, session) {
                      '&',
                      "Seasons=",Seasons,
                      '&',
-                     "Episodes=",Episodes
+                     "Episodes=",Episodes,
+                     '&',
+                     "inYearS1=",inYearS1,
+                     '&',
+                     "inYearS2=",inYearS2,
+                     '&',
+                     "inYearE1=",inYearE1,
+                     '&',
+                     "inYearE2=",inYearE2
                      )
     updateTextInput(session,"url_param",value = marcador)
     
@@ -153,7 +185,68 @@ shinyServer(function(input, output, session) {
     
   })
   
-
   
+  output$tabla_3 <- DT::renderDataTable({
+    mi_lista_reactiva()
+    data %>% select(Title,Seasons,Episodes, `Premiere_Year`) %>% DT::datatable(selection = 'single')
+  })
+  
+  
+  mi_lista_reactiva <- reactive({
+    n_row <- input$tabla_3_rows_selected
+    n_row_elim <- input$tabla_4_rows_selected
+    
+    if(!is.null(n_row_elim)){
+      mi_lista <<- mi_lista[-n_row_elim,]
+      
+    }
+    
+    if(!is.null(n_row)){
+      new <- data[n_row,]
+      mi_lista <<- rbind(mi_lista, new)
+      mi_lista <<- unique(mi_lista)
+    }
+    
+    
+    return(mi_lista)
+  })
+  
+  output$output_1 <- renderPrint({
+    input$tabla_3_rows_selected
+  })
+  
+  output$tabla_4 <- DT::renderDataTable({
+    mi_lista_reactiva() %>% select(Title) %>% DT::datatable(selection = 'single')
+  })
+  
+  
+  output$output_2 <- renderPrint({
+    input$tabla_4_rows_selected
+  })
+  
+  
+  output$plot_dias <- renderPlotly({
+    mis_episodios <- sum(mi_lista_reactiva()$Episodes)
+    
+    episodios <- input$episodios
+    
+    
+    #mis_episodios <- 30
+    
+    #episodios <- 2
+    
+    
+    if(mis_episodios > 0 && episodios > 0) {
+      dias <- round(mis_episodios / episodios,0)
+      
+      info <- data.frame(dia = seq(1, dias, 1), 
+                         episodios_acumulados = seq(episodios, dias * episodios, episodios))
+      
+      plot_ly(info, x = ~dia, y=~episodios_acumulados, color=~episodios_acumulados, type = "bar")
+    }
+    else{
+      plot_ly(x = c(1), y=c(1), type = "bar")
+    }
+  })
   
 })
