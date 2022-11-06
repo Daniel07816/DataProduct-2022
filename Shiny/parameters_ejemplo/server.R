@@ -22,8 +22,6 @@ shinyServer(function(input, output,session) {
         if(!is.null(bar_col)){
             updateSelectInput(session, "set_col", selected = bar_col)
         }
-        
-        
     })
     
     

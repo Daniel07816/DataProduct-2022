@@ -10,20 +10,11 @@
 library(shiny)
 library(DT)
 library(readr)
+library(dplyr)
+library(ggplot2)
 
 #Dataset
-dataset <- read_csv("dataset.csv")
-dataset <- dataset[-5]
-
-dataset <- dataset %>% 
-  mutate(Seasons = case_when(!is.na(Seasons) ~ Seasons, is.na(Seasons) ~ "1"))
-
-dataset <- dataset %>% 
-  mutate(Seasons = as.numeric(Seasons), 
-         Episodes = as.numeric(Episodes)) %>% 
-  filter(!is.na(Seasons)) %>% 
-  filter(!is.na(Episodes))
-
+dataset <- readRDS("data.rds")
 
 shinyUI(fluidPage(
 
@@ -73,8 +64,8 @@ shinyUI(fluidPage(
                    ),
                  ),
                  fluidRow(
-                   div(DT::dataTableOutput("tabla")),
-                   style = "font-size: 98%; width: 100%"
+                   div(DT::renderDataTable("tabla_1")),
+                   # style = "font-size: 98%; width: 100%"
                  )
                )
       ),
@@ -87,12 +78,9 @@ shinyUI(fluidPage(
                fluidRow( column(12, DT::dataTableOutput("tabla_2")))
       ),
       tabPanel("Adicionales",
-               h1('Vista Basica'),
-               fluidRow(
-                 column(12,DT::dataTableOutput("tabla_1"))
-               ),
-               h1("Agregar filtros"),
-               fluidRow( column(12, DT::dataTableOutput("tabla_2")))
+
+                 column(12,tableOutput('table1'))
+
       )
     )
 ))

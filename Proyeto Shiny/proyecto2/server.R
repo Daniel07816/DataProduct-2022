@@ -1,26 +1,17 @@
 library(shiny)
+library(DT)
 library(readr)
 library(dplyr)
 library(ggplot2)
 
 
 #Dataset
-dataset <- read_csv("dataset.csv")
-dataset <- dataset[-5]
-
-dataset <- dataset %>% 
-  mutate(Seasons = case_when(!is.na(Seasons) ~ Seasons, is.na(Seasons) ~ "1"))
-
-dataset <- dataset %>% 
-  mutate(Seasons = as.numeric(Seasons), 
-         Episodes = as.numeric(Episodes)) %>% 
-  filter(!is.na(Seasons)) %>% 
-  filter(!is.na(Episodes))
+dataset <- readRDS("data.rds")
 
 shinyServer(function(input, output, session) {
   
   output$tabla <- DT::renderDataTable({
-    tabla <- dataset 
+    tabla <- data_pro 
     if(input$inStyle != ""){
       if(input$inStyle == "All"){
         tabla <- tabla 
@@ -50,6 +41,11 @@ shinyServer(function(input, output, session) {
     
     tabla <- tabla %>% select(Title, Seasons, Episodes, Country, `Premiere Year`,`Final Year`,`Original Channel`, Technique) %>%
       DT::datatable(options = list(searching=FALSE,bLengthChange =FALSE))
+    
+    tabla
   })
+  
+  
+  output$tabla1 <- renderTable({mtcars})
 
 })
