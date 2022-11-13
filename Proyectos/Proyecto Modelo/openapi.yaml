@@ -169,4 +169,8 @@ paths:
                   type: factor
                   title: purpose
                   example: business
+                Risk:
+                  type: factor
+                  title: risk
+                  example: good
                   
