@@ -42,6 +42,8 @@ gcredit$Saving.accounts[is.na(gcredit$Saving.accounts)] = "little"
 #Modelo-----------------------------
 dt = sort(sample(nrow(gcredit), nrow(gcredit)*0.7))
 train = gcredit[dt,(2:11)]
+
+saveRDS(train, "train.rds")
 test = gcredit[-dt,(2:11)]
 
 

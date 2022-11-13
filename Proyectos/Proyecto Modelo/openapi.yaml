@@ -1,0 +1,120 @@
+openapi: "3.0.3"
+servers:
+  description: Localhost
+  url: http://127.0.0.1:80
+info:
+  description: API Description
+  version: "1.0.0"
+  title: Stranded Patient Prediction
+  contact:
+    email: "g.hutson@nhs.net"
+paths:
+  /connection-status:
+    get:
+      summary: 'Checks that our API service is running'
+      responses:
+        default:
+          description: Default response.
+  /predict:
+    post:
+      summary: 'Predict stranded patients based on input JSON'
+      responses:
+        default:
+          description: Default response.
+      parameters: []
+      requestBody:
+        description: Stranded Patient Data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Age: 
+                  type: number
+                  title: edad de la persona 
+                  example: 25
+                Sex: 
+                  type: factor
+                  title: sexo
+                  example: female
+                Job: 
+                  type: number
+                  title: job
+                  example: 2
+                Housing: 
+                  type: factor
+                  title: housing
+                  example: free
+                Saving.accounts: 
+                  type: factor
+                  title: savingAccounts
+                  example: little
+                Checking.account: 
+                  type: factor
+                  title: cheking
+                  example: little
+                Credit.amount: 
+                  type: number
+                  title: Creditamount
+                  example: 4308
+                Duration: 
+                  type: number
+                  title: duration
+                  example: 12
+                Purpose: 
+                  type: factor
+                  title: purpose
+                  example: business
+  /batches:
+    post:
+      summary: 'Predict stranded patients based on input JSON'
+      responses:
+        default:
+          description: Default response.
+      parameters: []
+      requestBody:
+        description: Stranded Patient Data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Age: 
+                  type: number
+                  title: edad de la persona 
+                  example: 25
+                Sex: 
+                  type: factor
+                  title: sexo
+                  example: female
+                Job: 
+                  type: number
+                  title: job
+                  example: 2
+                Housing: 
+                  type: factor
+                  title: housing
+                  example: free
+                Saving.accounts: 
+                  type: factor
+                  title: savingAccounts
+                  example: little
+                Checking.account: 
+                  type: factor
+                  title: cheking
+                  example: little
+                Credit.amount: 
+                  type: number
+                  title: Creditamount
+                  example: 4308
+                Duration: 
+                  type: number
+                  title: duration
+                  example: 12
+                Purpose: 
+                  type: factor
+                  title: purpose
+                  example: business
+                  
