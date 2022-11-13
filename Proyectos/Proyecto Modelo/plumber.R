@@ -12,6 +12,8 @@ library(readr)
 library(lubridate)
 library(jsonlite)
 
+library(ggpubr)
+
 
 # Utilise post method to send JSON unseen data, in the same 
 # format as our dataset
@@ -138,9 +140,26 @@ function(req, res){
   #Creando Matroz de confusion
   matrix = with(test, table(Predicted, Risk))
   mediciones(matrix)
+  
+  
+  par(mfrow=c(2,1))
   mosaic(matrix, shade = T, colorize = T, main = "Matriz de Confusion",
          gp = gpar(fill = matrix(c("green", "red", "red", "green"),2,2)))
+  hist(test$Credit.amount)
+
   
+  # plot_1 <- mosaic(matrix, shade = T, colorize = T, main = "Matriz de Confusion",
+  #                  gp = gpar(fill = matrix(c("green", "red", "red", "green"),2,2)))
+  # plot_2 <- mosaic(matrix, shade = T, colorize = T, main = "Matriz de Confusion",
+  #                  gp = gpar(fill = matrix(c("green", "red", "red", "green"),2,2)))
+
+  # combined_plot <- ggarrange(plot_1,
+  #                            plot_2,
+  #                            nrow = 2,
+  #                            ncol = 1) 
+  # 
+  # 
+  # combined_plot
   #ROC-AOC
   #rocaoc = roc(gcredit$Risk ~ gcredit$Duration)
   #rocaoc #(mientras mas alto mejor)
