@@ -24,20 +24,17 @@ library(jsonlite)
 modelo <- readRDS("random_forest.rds")
 modelo$modelInfo
 
-train <- readRDS("train.rds")[1,]
+train <- readRDS("metricas/train.rds")[1,]
 
 
 logge <- function(req, res){
   # boole <- length(req$args)
-  boole <- 1
-  
   d <- Sys.time()
   y <-list('usuario' = Sys.getenv("USERNAME"),
            'end_point' = req$PATH_INFO,
            'user_agent'=req$HTTP_USER_AGENT,
            'time' = d, 
            'payload'=req$body, 
-           'status' = res$status, 
            'output' = res$body
   )
   
@@ -88,19 +85,35 @@ function(req, res){
 #* @post /batches
 function(req, res){
   data <- as.data.frame(req$body)
-  data$Risk <- "good"
+  data$Risk <- "bad"
   info <- rbind(train, data)
   info <- info[-1,]
   
-  resulta <- data.frame(predict(modelo, info))
+  result <- data.frame(predict(modelo, info))
   
-  res$body <- resulta
+  res$body <- result
   
   logge(req,res)
   
-  resulta
+  result
 }
 
+
+#* Predice si un cliente es "bueno" o "malo" para pagar su prestamo
+#* @serializer png
+#* @get /metricas
+function(){
+  test <- read_csv('metricas/test.csv')
+  test <- rbind(train, test)
+  test <- test[-1,]
+  
+  x <- seq(-10, 10, by = .1)
+  
+  # Choose the mean as 2.5 and standard deviation as 0.5.
+  y <- dnorm(x, mean = 2.5, sd = 0.5)
+
+  plot(x,y)
+}
 
 
 #* @plumber

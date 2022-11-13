@@ -5,9 +5,10 @@ servers:
 info:
   description: API Description
   version: "1.0.0"
-  title: Stranded Patient Prediction
+  title: Prediccion de clientes de credito
   contact:
-    email: "g.hutson@nhs.net"
+    email: "cldelcid@ufm.edu"
+    email: "danielbehar@ufm.edu"
 paths:
   /connection-status:
     get:
@@ -17,7 +18,7 @@ paths:
           description: Default response.
   /predict:
     post:
-      summary: 'Predict stranded patients based on input JSON'
+      summary: 'Predice si varios clientes es bueno o malo para pagar basado en input JSON'
       responses:
         default:
           description: Default response.
@@ -68,7 +69,7 @@ paths:
                   example: business
   /batches:
     post:
-      summary: 'Predict stranded patients based on input JSON'
+      summary: 'Predice si varios clientes es bueno o malo para pagar basado en input JSON'
       responses:
         default:
           description: Default response.
@@ -117,4 +118,11 @@ paths:
                   type: factor
                   title: purpose
                   example: business
+  /metricas:
+    get:
+      summary: 'Retorna un png con las metricas del modelo'
+      responses:
+        default:
+          description: Default response.
+      parameters: []
                   
