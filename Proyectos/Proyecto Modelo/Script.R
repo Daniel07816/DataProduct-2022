@@ -1,6 +1,3 @@
-setwd("C:/Users/danie/Desktop/DataProduct-2022/Proyectos/Proyecto Modelo")
-gcredit = read.csv("german_credit_data.csv")
-
 library(ISLR)
 library(randomForest)
 library(naniar)

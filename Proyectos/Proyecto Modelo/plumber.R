@@ -5,13 +5,13 @@ library(naniar)
 library(missMDA)
 library(vcd)
 library(pROC)
-
 library(plumber)
 library(dplyr)
 library(rpart)
 library(readr)
 library(lubridate)
 library(jsonlite)
+library(Rook)
 
 
 
@@ -47,6 +47,26 @@ logge <- function(req, res){
   dir.create(dir, recursive = TRUE)
   
   write(archivo, file = paste0(dir,"/",as.integer(d),".json"), append = TRUE)
+}
+
+mediciones = function(CM)
+{
+  TN = CM[1,1]
+  TP = CM[2,2]
+  FP = CM[2,1]
+  FN = CM[1,2]
+  
+  recall = TP/(TP+FN)
+  accuracy = (TP+TN)/(TN+TP+FP+FN)
+  presicion = TP/(TP+FP)
+  f1 = (2*presicion*recall)/(presicion+recall)
+  
+  results = list(
+    RECALL = round(recall,2),
+    ACCURACY = round(accuracy,2),
+    PRESICION = round(presicion,2),
+    SPECIFICITY = round(f1,2)
+  )
 }
 
 
@@ -101,18 +121,34 @@ function(req, res){
 
 #* Predice si un cliente es "bueno" o "malo" para pagar su prestamo
 #* @serializer png
-#* @get /metricas
-function(){
-  test <- read_csv('metricas/test.csv')
+#* @post /metricas
+function(req, res){
+  test <- as.data.frame(req$body)
   test <- rbind(train, test)
   test <- test[-1,]
   
-  x <- seq(-10, 10, by = .1)
+  result <- data.frame(predict(modelo, test))
   
-  # Choose the mean as 2.5 and standard deviation as 0.5.
-  y <- dnorm(x, mean = 2.5, sd = 0.5)
-
-  plot(x,y)
+  res$body <- result
+  
+  logge(req,res)
+  
+  #Prediccion
+  rf.pred = predict(modelo, test)
+  test$Predicted = rf.pred
+  
+  #Creando Matroz de confusion
+  matrix = with(test, table(Predicted, Risk))
+  mediciones(matrix)
+  mosaic(matrix, shade = T, colorize = T, main = "Matriz de Confusion",
+         gp = gpar(fill = matrix(c("green", "red", "red", "green"),2,2)))
+  
+  #ROC-AOC
+  #rocaoc = roc(gcredit$Risk ~ gcredit$Duration)
+  #rocaoc #(mientras mas alto mejor)
+  #ci.auc(rocaoc)
+  #plot(rocaoc)
+  
 }
 
 

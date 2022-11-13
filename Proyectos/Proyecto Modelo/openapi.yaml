@@ -8,7 +8,7 @@ info:
   title: Prediccion de clientes de credito
   contact:
     email: "cldelcid@ufm.edu"
-    email: "danielbehar@ufm.edu"
+    email1: "cldelcid@ufm.edu"
 paths:
   /connection-status:
     get:
@@ -119,10 +119,54 @@ paths:
                   title: purpose
                   example: business
   /metricas:
-    get:
+    post:
       summary: 'Retorna un png con las metricas del modelo'
       responses:
         default:
           description: Default response.
       parameters: []
+      requestBody:
+        description: Stranded Patient Data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Age: 
+                  type: number
+                  title: edad de la persona 
+                  example: 25
+                Sex: 
+                  type: factor
+                  title: sexo
+                  example: female
+                Job: 
+                  type: number
+                  title: job
+                  example: 2
+                Housing: 
+                  type: factor
+                  title: housing
+                  example: free
+                Saving.accounts: 
+                  type: factor
+                  title: savingAccounts
+                  example: little
+                Checking.account: 
+                  type: factor
+                  title: cheking
+                  example: little
+                Credit.amount: 
+                  type: number
+                  title: Creditamount
+                  example: 4308
+                Duration: 
+                  type: number
+                  title: duration
+                  example: 12
+                Purpose: 
+                  type: factor
+                  title: purpose
+                  example: business
                   
