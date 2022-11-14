@@ -1,11 +1,6 @@
 library(plumber)
-library(ISLR)
-library(randomForest)
-library(naniar)
-library(missMDA)
 library(vcd)
 library(pROC)
-library(plumber)
 library(dplyr)
 library(rpart)
 library(readr)
@@ -17,15 +12,14 @@ library(ggpubr)
 # Utilise post method to send JSON unseen data, in the same 
 # format as our dataset
 
-#--------------------------------------------------
-# Read in model 
-#--------------------------------------------------
+#Lectura del modelo--------------------------------
 modelo <- readRDS("random_forest.rds")
 modelo$modelInfo
 
 train <- readRDS("metricas/train.rds")[1,]
+#--------------------------------------------------
 
-
+#Generador de Logs
 logge <- function(req, res){
   # boole <- length(req$args)
   d <- Sys.time()
@@ -48,6 +42,7 @@ logge <- function(req, res){
   write(archivo, file = paste0(dir,"/",as.integer(d),".json"), append = TRUE)
 }
 
+#Generador de metricas
 mediciones = function(CM)
 {
   TN = CM[1,1]
@@ -63,7 +58,7 @@ mediciones = function(CM)
   values = c(
     round(recall,2), round(accuracy,2), round(presicion,2), round(f1,2)
   )
-  names = c("RECALL", "ACCURACY", "PRESITION", "SPECIFICITY")
+  names = c("RECALL", "ACCURACY", "PRECISION", "SPECIFICITY")
   
   result = cbind(names, values)
 }
@@ -99,7 +94,7 @@ function(req, res){
 
 
 
-#* Predice si un cliente es "bueno" o "malo" para pagar su prestamo
+#* Predice si varios clientes son "buenos" o "malos" para pagar sus prestamos
 #* @serializer json
 #* @post /batches
 function(req, res){
@@ -118,7 +113,7 @@ function(req, res){
 }
 
 
-#* Predice si un cliente es "bueno" o "malo" para pagar su prestamo
+#* Metricas del modelo respecto un dataset de pruebas
 #* @serializer png
 #* @post /metricas
 function(req, res){
