@@ -28,7 +28,7 @@ Dicho dataset contiene las siguientes variables:
 
 El modelo recibe todos los valores descritos anteriormente y retorna si la persona es "buena" o "mala" para pagar el prestamo que esta solicitando. El modelo consiste en un bosque de arboles de regresion. Este tipo de modelo contiene una cantidad determinada de arboles, donde cada arbol predice si la persona es buena o no. Para determinar el resultado, los arboles "debaten" entre si sus hallazgos y definen si es o no buena la persona, es decir, llegan a un consenso. El modelo retorna si la persona es buena (good) o no (bad).
     
-## Sección III: Deocumentacion de los Endpoints.
+## Sección III: Documentacion de los Endpoints.
 
 ### Connection-status
 
@@ -40,11 +40,11 @@ Este endpoint recibe un JSON con solamente 1 paquete de informacion necesaria pa
 
 ### Batches
 
-Este endpoint recibe un JSON con varios paquetes de informacion necesaria para predecir si las personas son buenas o no. Retorna el valor "good" o "bad" para cada prediccion. que se solicito al modelo.
+Este endpoint recibe un JSON con varios paquetes de informacion necesaria para predecir si las personas son buenas o no. Retorna el valor "good" o "bad" para cada prediccion que se solicito al modelo.
 
 ### Metricas
 
-Este endpoint recibe un dataset tipo "test" para validar que el modelo si este prediciendo correctamente, es decir, que si tome las variables correctas y que no haya caido en `Overfitting` u `Onderfitting`. Retorna un PNG con:
+Este endpoint recibe un dataset tipo "test" para validar que el modelo si este prediciendo correctamente, es decir, que si tome las variables correctas y que no haya caido en `Overfitting` o en `Underfitting`. Retorna un PNG con:
   * La matriz de confusion
   * Una grafica detallando el ROC y AOC del modelo
   * Una tabla con: Accuracy, Recall, Precision y Specificity
