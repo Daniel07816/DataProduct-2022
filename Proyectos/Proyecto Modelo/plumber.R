@@ -58,9 +58,9 @@ mediciones = function(CM)
   f1 = (2*presicion*recall)/(presicion+recall)
   
   values = c(
-    round(recall,2), round(accuracy,2), round(presicion,2), round(f1,2)
+    round(recall,2), round(accuracy,2), round(presicion,2), round(f1,2), 0
   )
-  names = c("RECALL", "ACCURACY", "PRECISION", "SPECIFICITY")
+  names = c("RECALL", "ACCURACY", "PRECISION", "SPECIFICITY", "AUC")
   
   result = cbind(names, values)
 }
@@ -119,13 +119,14 @@ function(req, res){
 #* @serializer png
 #* @post /metricas
 function(req, res){
-  test <- as.data.frame(req$body)
+  test <- as.data.frame(req$body$file$parse)
   test <- rbind(train, test)
   test <- test[-1,]
   
   result <- data.frame(predict(modelo, test))
   
   res$body <- result
+  req$body <- toJSON(test)
   
   logge(req,res)
   
@@ -143,12 +144,14 @@ function(req, res){
                 byrow = TRUE))
 
   rocaoc = roc(test$Risk ~ test$Duration)
-  ci.auc(rocaoc)
+  tabla = mediciones(matrix)
+  tabla[5,2] = round(rocaoc$auc,4)
+  
   mosaicplot(matrix, main = "Confusion Matrix", shade = FALSE, legend = FALSE, 
                        cex.axis = 0.85, color = 2:3)
   plot(rocaoc)
   pushViewport(viewport(y=.25,height=.5))
-  grid.table(mediciones(matrix))
+  grid.table(tabla)
 
 }
 
