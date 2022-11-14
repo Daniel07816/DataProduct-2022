@@ -6,7 +6,9 @@ library(rpart)
 library(readr)
 library(lubridate)
 library(jsonlite)
-library(ggpubr)
+library(randomForest)
+library(gridExtra)
+library(grid)
 
 
 # Utilise post method to send JSON unseen data, in the same 
