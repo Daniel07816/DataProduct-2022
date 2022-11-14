@@ -2,8 +2,6 @@
 title: "Descripcion de Proyecto"
 author: "Daniel Behar/Cruz del Cid"
 date: "13/11/2022"
-output: rmarkdown::github_document
-always_allow_html: true
 ---
 
 
@@ -13,18 +11,18 @@ always_allow_html: true
 
 El dataset `german_credit_data.csv` es un dataset de informacion acerca de los clientes de una red crediticia alemana.
 Dicho dataset contiene las siguientes variables:
-    * `Age`: variable de tipo entera que contiene la edad de la persona.
-    * `Sex`: variable de tipo string que contiene el sexo de la persona. Esta debe ordenarse por factor.
-    * `Job`: variable de tipo entera que contiene un numero que representa la categoria de trabajo que desempeña la                 persona.
-    * `Housing`: variable de tipo string que indica el estado de la casa de la persona. Esta debe ordenarse por factor.
-    * `Saving Accounts`: variable de tipo string que indica si la persona tiene una cuenta de ahorro o una descripcion
-             de cuanto tiene, que puede ser little, moderate, quite rich o rich. Esta debe ordenarse por factor.
-    * `Saving Accounts`: variable de tipo string que indica si la persona tiene una cuenta monetaria y una descripcion
-             de cuanto tiene, que puede ser little, moderate, quite rich o rich. Esta debe ordenarse por factor.
-    * `Credit Amount`: variable de tipo entera que indica la cantidad de credito asignada a la persona.
-    * `Duration`: variable de tipo entera que indica la cantidad de credito asignada a la persona.
-    * `Purpose`: variable de tipo string que detalla el uso que se le dara al prestamo. Esta debe ordenarse por factor.
-    * `Risk`: resultado que los evaluadores bancarios le asignaron a la persona. Esta debe ordenarse por factor.
+  * `Age`: variable de tipo entera que contiene la edad de la persona.
+  * `Sex`: variable de tipo string que contiene el sexo de la persona. Esta debe ordenarse por factor.
+  * `Job`: variable de tipo entera que contiene un numero que representa la categoria de trabajo que desempeña la                persona.
+  * `Housing`: variable de tipo string que indica el estado de la casa de la persona. Esta debe ordenarse por factor.
+  * `Saving Accounts`: variable de tipo string que indica si la persona tiene una cuenta de ahorro o una descripcion
+           de cuanto tiene, que puede ser little, moderate, quite rich o rich. Esta debe ordenarse por factor.
+  * `Saving Accounts`: variable de tipo string que indica si la persona tiene una cuenta monetaria y una descripcion
+           de cuanto tiene, que puede ser little, moderate, quite rich o rich. Esta debe ordenarse por factor.
+  * `Credit Amount`: variable de tipo entera que indica la cantidad de credito asignada a la persona.
+  * `Duration`: variable de tipo entera que indica la cantidad de credito asignada a la persona.
+  * `Purpose`: variable de tipo string que detalla el uso que se le dara al prestamo. Esta debe ordenarse por factor.
+  * `Risk`: resultado que los evaluadores bancarios le asignaron a la persona. Esta debe ordenarse por factor.
 
 ## Sección II: Descripcion del Modelo.
 
@@ -47,6 +45,6 @@ Este endpoint recibe un JSON con varios paquetes de informacion necesaria para p
 ### Metricas
 
 Este endpoint recibe un dataset tipo "test" para validar que el modelo si este prediciendo correctamente, es decir, que si tome las variables correctas y que no haya caido en `Overfitting` u `Onderfitting`. Retorna un PNG con:
-    * La matriz de confusion
-    * Una grafica detallando el ROC y AOC del modelo
-    * Una tabla con: Accuracy, Recall, Precision y Specificity
+  * La matriz de confusion
+  * Una grafica detallando el ROC y AOC del modelo
+  * Una tabla con: Accuracy, Recall, Precision y Specificity
