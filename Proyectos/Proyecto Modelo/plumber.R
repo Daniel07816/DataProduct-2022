@@ -11,7 +11,6 @@ library(rpart)
 library(readr)
 library(lubridate)
 library(jsonlite)
-
 library(ggpubr)
 
 
@@ -61,12 +60,12 @@ mediciones = function(CM)
   presicion = TP/(TP+FP)
   f1 = (2*presicion*recall)/(presicion+recall)
   
-  results = list(
-    RECALL = round(recall,2),
-    ACCURACY = round(accuracy,2),
-    PRESICION = round(presicion,2),
-    SPECIFICITY = round(f1,2)
+  values = c(
+    round(recall,2), round(accuracy,2), round(presicion,2), round(f1,2)
   )
+  names = c("RECALL", "ACCURACY", "PRESITION", "SPECIFICITY")
+  
+  result = cbind(names, values)
 }
 
 
@@ -137,35 +136,23 @@ function(req, res){
   rf.pred = predict(modelo, test)
   test$Predicted = rf.pred
   
-  #Creando Matroz de confusion
+  #Creando Matriz de confusion
   matrix = with(test, table(Predicted, Risk))
-  mediciones(matrix)
   
-  
-  par(mfrow=c(2,1))
-  mosaic(matrix, shade = T, colorize = T, main = "Matriz de Confusion",
-         gp = gpar(fill = matrix(c("green", "red", "red", "green"),2,2)))
-  hist(test$Credit.amount)
+  layout(matrix(c(1, 2,  # First, second
+                  3, 3), # and third plot
+                nrow = 2,
+                ncol = 2,
+                byrow = TRUE))
 
-  
-  # plot_1 <- mosaic(matrix, shade = T, colorize = T, main = "Matriz de Confusion",
-  #                  gp = gpar(fill = matrix(c("green", "red", "red", "green"),2,2)))
-  # plot_2 <- mosaic(matrix, shade = T, colorize = T, main = "Matriz de Confusion",
-  #                  gp = gpar(fill = matrix(c("green", "red", "red", "green"),2,2)))
+  rocaoc = roc(test$Risk ~ test$Duration)
+  ci.auc(rocaoc)
+  mosaicplot(matrix, main = "Confusion Matrix", shade = FALSE, legend = FALSE, 
+                       cex.axis = 0.85, color = 2:3)
+  plot(rocaoc)
+  pushViewport(viewport(y=.25,height=.5))
+  grid.table(mediciones(matrix))
 
-  # combined_plot <- ggarrange(plot_1,
-  #                            plot_2,
-  #                            nrow = 2,
-  #                            ncol = 1) 
-  # 
-  # 
-  # combined_plot
-  #ROC-AOC
-  #rocaoc = roc(gcredit$Risk ~ gcredit$Duration)
-  #rocaoc #(mientras mas alto mejor)
-  #ci.auc(rocaoc)
-  #plot(rocaoc)
-  
 }
 
 
