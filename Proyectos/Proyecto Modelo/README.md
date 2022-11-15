@@ -17,7 +17,7 @@ Dicho dataset contiene las siguientes variables:
   * `Housing`: variable de tipo string que indica el estado de la casa de la persona. Esta debe ordenarse por factor.
   * `Saving Accounts`: variable de tipo string que indica si la persona tiene una cuenta de ahorro o una descripcion
            de cuanto tiene, que puede ser little, moderate, quite rich o rich. Esta debe ordenarse por factor.
-  * `Saving Accounts`: variable de tipo string que indica si la persona tiene una cuenta monetaria y una descripcion
+  * `Checking Account`: variable de tipo string que indica si la persona tiene una cuenta monetaria y una descripcion
            de cuanto tiene, que puede ser little, moderate, quite rich o rich. Esta debe ordenarse por factor.
   * `Credit Amount`: variable de tipo entera que indica la cantidad de credito asignada a la persona.
   * `Duration`: variable de tipo entera que indica la cantidad de credito asignada a la persona.
